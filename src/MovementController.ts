@@ -1,10 +1,11 @@
+import FuelController from "./FuelController";
 import MovementHistory, { MoveAction } from "./MovementHistory";
 import { BlockDirection, SurroundingBlocks } from "./SpatialMap";
 
 // 1 - left, -1 right
 function rotateDirection(direction: Vector, rotate: number) {
 	// Rotation via complex numbers would've been overkill
-	const newDirection = direction;
+	const newDirection = new Vector(0, 0, 0);
 
 	if (direction.x !== 0) { // Turtle facing left/right
 		newDirection.z = -direction.x * rotate;
@@ -40,7 +41,10 @@ export default class MovementController {
 		"TURN_RIGHT": () => { return this.turnRight(); }
 	};
 
-	constructor() {
+	fuel: FuelController;
+
+	constructor(fuel: FuelController) {
+		this.fuel = fuel;
 		this.pos = new Vector(0, 0, 0);
 
 		// x - Left/Right
@@ -62,7 +66,7 @@ export default class MovementController {
 			case "LEFT":
 				return this.pos.add(rotateDirection(this.direction, 1));
 			case "RIGHT":
-				return this.pos.add(rotateDirection(this.direction, -1))
+				return this.pos.add(rotateDirection(this.direction, -1));
 		}
 	}
 
@@ -72,12 +76,32 @@ export default class MovementController {
 		this.direction = rotateDirection(this.direction, rotate);
 	}
 
+	private forwardFueled() {
+		this.fuel.ensureFuel();
+		return turtle.forward();
+	}
+
+	private backFueled() {
+		this.fuel.ensureFuel();
+		return turtle.back();
+	}
+
+	private upFueled() {
+		this.fuel.ensureFuel();
+		return turtle.up();
+	}
+
+	private downFueled() {
+		this.fuel.ensureFuel();
+		return turtle.down();
+	}
+
 	// Moves forward n blocks
 	forward(blocks = 1): boolean {
 		let moveSuccess = true;
 
 		for (let i = 0; i < blocks; i++) {
-			if (!turtle.forward()) {
+			if (!this.forwardFueled()) {
 				moveSuccess = false;
 				break;
 			}
@@ -94,7 +118,7 @@ export default class MovementController {
 		let moveSuccess = true;
 
 		for (let i = 0; i < blocks; i++) {
-			if (!turtle.back()) {
+			if (!this.backFueled()) {
 				moveSuccess = false;
 				break;
 			}
@@ -111,7 +135,7 @@ export default class MovementController {
 		let moveSuccess = true;
 
 		for (let i = 0; i < blocks; i++) {
-			if (!turtle.up()) {
+			if (!this.upFueled()) {
 				moveSuccess = false;
 				break;
 			}
@@ -128,7 +152,7 @@ export default class MovementController {
 		let moveSuccess = true;
 
 		for (let i = 0; i < blocks; i++) {
-			if (!turtle.down()) {
+			if (!this.downFueled()) {
 				moveSuccess = false;
 				break;
 			}
@@ -138,6 +162,58 @@ export default class MovementController {
 		}
 
 		return moveSuccess;
+	}
+
+	forceForward(blocks = 1) {
+		for (let i = 0; i < blocks; i++) {
+			while (!this.forwardFueled()) {
+				turtle.dig();
+			}
+
+			this.pos = this.pos.add(this.direction);
+			if (this.trackHistory) this.history.add("FORWARD");
+		}
+	}
+
+	forceBack(blocks = 1) {
+		for (let i = 0; i < blocks; i++) {
+			if (!this.backFueled()) {
+				turtle.turnLeft();
+				turtle.turnLeft();
+
+				while (!this.forwardFueled()) {
+					turtle.dig();
+				}
+
+				turtle.turnLeft();
+				turtle.turnLeft();
+			}
+
+			this.pos = this.pos.add(this.direction);
+			if (this.trackHistory) this.history.add("FORWARD");
+		}
+	}
+
+	forceUp(blocks = 1) {
+		for (let i = 0; i < blocks; i++) {			
+			while (!this.upFueled()) {
+				turtle.digUp();
+			}
+
+			this.pos = this.pos.add(new Vector(0, 1, 0));
+			if (this.trackHistory) this.history.add("UP");
+		}
+	}
+
+	forceDown(blocks = 1) {
+		for (let i = 0; i < blocks; i++) {
+			while (!this.downFueled()) {
+				turtle.digDown();
+			}
+
+			this.pos = this.pos.add(new Vector(0, -1, 0));
+			if (this.trackHistory) this.history.add("DOWN");
+		}
 	}
 
 	turnRight() {

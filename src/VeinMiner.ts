@@ -39,31 +39,31 @@ export default class VeinMiner {
 		switch (dir) {
 			case "TOP":
 				this.digUp();
-				this.movement.up();
+				this.movement.forceUp();
 				break;
 			case "BOTTOM":
 				this.digDown();
-				this.movement.down();
+				this.movement.forceDown();
 				break;
 			case "LEFT":
 				this.movement.turnLeft();
 				this.dig();
-				this.movement.forward();
+				this.movement.forceForward();
 				break;
 			case "RIGHT":
 				this.movement.turnRight();
 				this.dig();
-				this.movement.forward();
+				this.movement.forceForward();
 				break;
 			case "FRONT":
 				this.dig();
-				this.movement.forward();
+				this.movement.forceForward();
 				break;
 			case "REAR":
 				this.movement.turnLeft();
 				this.movement.turnLeft();
 				this.dig();
-				this.movement.forward();
+				this.movement.forceForward();
 				break;
 		}
 	}
@@ -84,14 +84,14 @@ export default class VeinMiner {
 		for (let i = 0; i < num; i++) {
 			if (turtle.detect()) this.dig();
 
-			this.movement.forward();
+			this.movement.forceForward();
 			this.attemptMineOreVein();
 
 			if (turtle.detectUp()) {
 				this.digUp();
-				this.movement.up();
+				this.movement.forceUp();
 				this.attemptMineOreVein();
-				this.movement.down();
+				this.movement.forceDown();
 			}
 		}
 	}
@@ -122,8 +122,6 @@ export default class VeinMiner {
 
 		this.movement.trackHistory = false;
 	}
-
-	// TODO: Handle gravel
 	
 	mineIteration() {
 		for (let i = 0; i < 3; i++) {
@@ -138,10 +136,10 @@ export default class VeinMiner {
 		this.movement.turnLeft();
 		this.movement.turnLeft();
 
-		this.movement.forward(this.shaftDepth);
+		this.movement.forceForward(this.shaftDepth);
 		this.mineForward(this.shaftDepth);
 
-		this.movement.back(this.shaftDepth);
+		this.movement.forceBack(this.shaftDepth);
 		this.movement.turnLeft();
 	}
 }
