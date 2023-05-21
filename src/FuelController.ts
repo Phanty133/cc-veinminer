@@ -1,3 +1,4 @@
+import { findFirstItem } from "./InventoryUtil";
 import type { BlockId } from "./minecraft";
 
 export default class FuelController {
@@ -9,28 +10,12 @@ export default class FuelController {
 		this.minLevel = minFuelLevel;
 	}
 
-	private findFuelItem(): { slot: number, item: string } | null {
-		for (let slot = 1; slot <= 16; slot++) {
-			const itemAttempt = turtle.getItemDetail(slot);
-
-			if (itemAttempt) {
-				const item = itemAttempt as ItemDetail;
-
-				if (this.whitelist.includes(item.name)) {
-					return { slot: Number(slot), item: item.name };
-				}
-			}
-		}
-		
-		return null;
-	}
-
 	ensureFuel() {
 		const curFuel = turtle.getFuelLevel();
 
 		if (curFuel >= this.minLevel) return;
 
-		const fuel = this.findFuelItem();
+		const fuel = findFirstItem((name) => this.whitelist.includes(name));
 
 		if (fuel === null) {
 			print("ERROR: No valid fuel found!");

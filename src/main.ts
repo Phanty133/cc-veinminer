@@ -9,8 +9,8 @@ function orePredicate(name: BlockId) {
 }
 
 const moveController = new MovementController();
-const fuelController = new FuelController(["minecraft:coal"], 5100);
-const miner = new VeinMiner(moveController, orePredicate, 16, 5);
+const fuelController = new FuelController(["minecraft:coal"], 100);
+const miner = new VeinMiner(moveController, orePredicate, 5);
 
 while (true) {
 	fuelController.ensureFuel();

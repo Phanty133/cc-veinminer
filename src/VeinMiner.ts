@@ -1,9 +1,9 @@
+import { findFirstItem } from "./InventoryUtil";
 import MovementController from "./MovementController";
 import SpatialMap, { SurroundingBlocks } from "./SpatialMap";
 import { BlockId } from "./minecraft";
 
 export default class VeinMiner {
-	torchSlot: number;
 	movement: MovementController;
 	map: SpatialMap;
 	shaftDepth: number;
@@ -12,12 +12,10 @@ export default class VeinMiner {
 	constructor(
 		movement: MovementController,
 		orePredicate: (name: BlockId) => boolean,
-		torchSlot = 16,
 		shaftDepth = 5
 	) {
 		this.movement = movement;
 		this.map = new SpatialMap(movement);
-		this.torchSlot = torchSlot;
 		this.shaftDepth = shaftDepth;
 		this.orePredicate = orePredicate;
 	}
@@ -71,16 +69,15 @@ export default class VeinMiner {
 	}
 
 	placeTorch() {
-		const torchCount = turtle.getItemCount(this.torchSlot);
+		const torch = findFirstItem((name) => name === "minecraft:torch");
 
-		if (torchCount === 0) {
+		if (torch === null) {
 			print("WARNING: Out of torches");
 			return;
 		}
 
-		turtle.select(this.torchSlot);
+		turtle.select(torch.slot);
 		turtle.placeUp();
-		turtle.select(1);
 	}
 
 	mineForward(num = 1) {
