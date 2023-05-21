@@ -1,6 +1,6 @@
 # cc-veinminer
 
-A strip/vein mining program for ComputerCraft/CC: Tweaked mining turtles.
+A strip/vein mining program for ComputerCraft/CC: Tweaked mining turtles. Compile with `npm run build`, then upload code generated in `dist/main.lua` to a mining turtle.
 
 ## Features:
 - Strip mining - Mines 3 blocks forwards, then `N` blocks to the left and right.
