@@ -18,3 +18,4 @@ A strip/vein mining program for ComputerCraft/CC: Tweaked mining turtles. Compil
 - [ ] Implement a more user-friendly way to configure whitelists/blacklists, shaft length and refuel target.
 - [ ] Auto-restart after world reload
 - [ ] Optimize torch placement
+- [ ] Remote analytics and multiple turtle management
