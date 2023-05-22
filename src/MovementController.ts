@@ -3,7 +3,7 @@ import MovementHistory, { MoveAction } from "./MovementHistory";
 import { BlockDirection, SurroundingBlocks } from "./SpatialMap";
 
 // 1 - left, -1 right
-function rotateDirection(direction: Vector, rotate: number) {
+export function rotateDirection(direction: Vector, rotate: number) {
 	// Rotation via complex numbers would've been overkill
 	const newDirection = new Vector(0, 0, 0);
 
@@ -51,23 +51,6 @@ export default class MovementController {
 		// y - Up/Down, Always 0
 		// z - Forward/Back
 		this.direction = new Vector(0, 0, 1);
-	}
-
-	blockDirectionToCoordinates(dir: BlockDirection): Vector {
-		switch (dir) {
-			case "FRONT":
-				return this.pos.add(this.direction);
-			case "REAR":
-				return this.pos.sub(this.direction);
-			case "TOP":
-				return this.pos.add(new Vector(0, 1, 0));
-			case "BOTTOM":
-				return this.pos.add(new Vector(0, -1, 0));
-			case "LEFT":
-				return this.pos.add(rotateDirection(this.direction, 1));
-			case "RIGHT":
-				return this.pos.add(rotateDirection(this.direction, -1));
-		}
 	}
 
 	// 1 - left, -1 right
@@ -230,6 +213,17 @@ export default class MovementController {
 		if (this.trackHistory) this.history.add("TURN_LEFT");
 
 		return true;
+	}
+
+	// 1 - counterclockwise, -1 - clockwise
+	turnAround(direction = 1) {
+		if (direction === 1) {
+			this.turnLeft();
+			this.turnLeft();
+		} else {
+			this.turnRight();
+			this.turnRight();
+		}
 	}
 
 	resetToForward() {

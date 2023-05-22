@@ -5,6 +5,7 @@ import type { BlockId } from "./minecraft";
 export interface Block {
 	name: BlockId | null,
 	checked: boolean,
+	breakable: boolean,
 }
 
 export default class BlockMap {
@@ -37,15 +38,35 @@ export default class BlockMap {
 
 	setBlock(pos: Vector, name: BlockId) {
 		const block = this.getBlock(pos);
-		const newBlockVal = { name, checked: true };
+		const newBlockVal: Block = {
+			name,
+			checked: true,
+			breakable: true
+		};
 
 		if (block === null) {
 			if (!(pos.x in this.blocks)) this.blocks[pos.x] = {};
 			if (!(pos.y in this.blocks[pos.x])) this.blocks[pos.x][pos.y] = {};
 			this.blocks[pos.x][pos.y][pos.z] = newBlockVal;
 		} else {
+			const prevBlock = this.blocks[pos.x][pos.y][pos.z];
+
+			if (prevBlock?.name === name) newBlockVal.breakable = prevBlock.breakable;
+
 			this.blocks[pos.x][pos.y][pos.z] = newBlockVal;
 		}
+
+		return newBlockVal;
+	}
+
+	setUnbreakable(pos: Vector): boolean {
+		const block = this.getBlock(pos);
+
+		if (block === null) return false;
+
+		print("INFO: Block set unbreakable");
+
+		this.blocks[pos.x][pos.y][pos.z].breakable = false;
 	}
 
 	removeBlock(pos: Vector): boolean {

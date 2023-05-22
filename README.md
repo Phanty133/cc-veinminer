@@ -13,7 +13,7 @@ A strip/vein mining program for ComputerCraft/CC: Tweaked mining turtles. Compil
 ## ToDo
 - [ ] Automatically block off ground level and ceiling fluids
 - [ ] Ore vein distance failsafe to prevent the turtle from wandering off too far for any reason
-- [ ] Correctly handle unmineable blocks that match the ore predicate
+- [x] Correctly handle unmineable blocks that match the ore predicate
 - [ ] Implement a more user-friendly way to configure whitelists/blacklists, shaft length and refuel target.
 - [ ] Auto-restart after world reload
 - [ ] Optimize torch placement

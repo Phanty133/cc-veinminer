@@ -1,17 +1,18 @@
-import BlockMap from "./BlockMap";
-import MovementController from "./MovementController";
+import BlockMap, { Block } from "./BlockMap";
+import MovementController, { rotateDirection } from "./MovementController";
 import { BlockId } from "./minecraft";
 
 export type BlockDirection = "FRONT" | "TOP" | "BOTTOM" | "LEFT" | "REAR" | "RIGHT";
-export type SurroundingBlocks = { [k in BlockDirection]: BlockId };
+export type SurroundingBlocks = { [k in BlockDirection]: Block };
 
 // Stores spatial information relative to start position
 export default class SpatialMap {
-	private movement: MovementController;
+	private move: MovementController;
+
 	readonly map: BlockMap = new BlockMap();
 
 	constructor(movement: MovementController) {
-		this.movement = movement;
+		this.move = movement;
 	}
 
 	private addFrontBlockToMap() {
@@ -20,9 +21,9 @@ export default class SpatialMap {
 		if (!blockAttempt[0]) return;
 
 		const { name } = blockAttempt[1] as { name: string };
+		const blockPos = this.blockDirectionToCoordinates("FRONT");
 
-		this.map.setBlock(this.movement.blockDirectionToCoordinates("FRONT"), name);
-		return name;
+		return this.map.setBlock(blockPos, name);
 	}
 
 	private addTopBlockToMap() {
@@ -31,10 +32,9 @@ export default class SpatialMap {
 		if (!blockAttempt[0]) return;
 
 		const { name } = blockAttempt[1] as { name: string };
-		const blockPos = this.movement.pos.add(new Vector(0, 1, 0));
+		const blockPos = this.move.pos.add(new Vector(0, 1, 0));
 
-		this.map.setBlock(blockPos, name);
-		return name;
+		return this.map.setBlock(blockPos, name);
 	}
 
 	private addBottomBlockToMap() {
@@ -43,10 +43,38 @@ export default class SpatialMap {
 		if (!blockAttempt[0]) return;
 
 		const { name } = blockAttempt[1] as { name: string };
-		const blockPos = this.movement.pos.add(new Vector(0, -1, 0));
+		const blockPos = this.move.pos.add(new Vector(0, -1, 0));
 
-		this.map.setBlock(blockPos, name);
-		return name;
+		return this.map.setBlock(blockPos, name);
+	}
+
+	blockDirectionToCoordinates(dir: BlockDirection): Vector {
+		switch (dir) {
+			case "FRONT":
+				return this.move.pos.add(this.move.direction);
+			case "REAR":
+				return this.move.pos.sub(this.move.direction);
+			case "TOP":
+				return this.move.pos.add(new Vector(0, 1, 0));
+			case "BOTTOM":
+				return this.move.pos.add(new Vector(0, -1, 0));
+			case "LEFT":
+				return this.move.pos.add(rotateDirection(this.move.direction, 1));
+			case "RIGHT":
+				return this.move.pos.add(rotateDirection(this.move.direction, -1));
+		}
+	}
+
+	getBlock(dir: BlockDirection): Block | null {
+		return this.map.getBlockEntry(this.blockDirectionToCoordinates(dir));
+	}
+
+	removeBlock(dir: BlockDirection): boolean {
+		return this.map.removeBlock(this.blockDirectionToCoordinates(dir));
+	}
+
+	setBlockUnbreakable(dir: BlockDirection): boolean {
+		return this.map.setUnbreakable(this.blockDirectionToCoordinates(dir));
 	}
 
 	getSurroundings(): SurroundingBlocks {
@@ -56,45 +84,45 @@ export default class SpatialMap {
 		out.TOP = this.addTopBlockToMap();
 		out.BOTTOM = this.addBottomBlockToMap();
 
-		const rearEntry = this.map.getBlockEntry(this.movement.blockDirectionToCoordinates("REAR"));
-		const leftEntry = this.map.getBlockEntry(this.movement.blockDirectionToCoordinates("LEFT"));
-		const rightEntry = this.map.getBlockEntry(this.movement.blockDirectionToCoordinates("RIGHT"));
+		out.REAR = this.getBlock("REAR");
+		out.LEFT = this.getBlock("LEFT");
+		out.RIGHT = this.getBlock("RIGHT");
 
 		let check: "ALL" | "LEFT" | "RIGHT" | "NONE" = "ALL";
 
-		if (rearEntry?.checked) {
-			if (leftEntry?.checked) {
-				if (rightEntry?.checked) {
+		if (out.REAR?.checked) {
+			if (out.LEFT?.checked) {
+				if (out.RIGHT?.checked) {
 					check = "NONE";
 				} else {
 					check = "RIGHT";
 				}
-			} else if (rightEntry?.checked) {
+			} else if (out.RIGHT?.checked) {
 				check = "LEFT";
 			}
 		}
 
 		if (check !== "NONE") {
-			this.movement.disableHistoryForAction(() => {
+			this.move.disableHistoryForAction(() => {
 				if (check === "RIGHT") {
-					this.movement.turnRight();
+					this.move.turnRight();
 					out.RIGHT = this.addFrontBlockToMap();
-					this.movement.turnLeft();
+					this.move.turnLeft();
 				} else if (check === "LEFT") {
-					this.movement.turnLeft();
+					this.move.turnLeft();
 					out.LEFT = this.addFrontBlockToMap();
-					this.movement.turnRight();
+					this.move.turnRight();
 				} else {
-					this.movement.turnLeft();
+					this.move.turnLeft();
 					out.LEFT = this.addFrontBlockToMap();
 
-					this.movement.turnLeft();
+					this.move.turnLeft();
 					out.REAR = this.addFrontBlockToMap();
 
-					this.movement.turnLeft();
+					this.move.turnLeft();
 					out.RIGHT = this.addFrontBlockToMap();
 
-					this.movement.turnLeft();
+					this.move.turnLeft();
 				}
 			});
 		}

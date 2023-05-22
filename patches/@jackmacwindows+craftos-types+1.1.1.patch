@@ -1,0 +1,17 @@
+diff --git a/node_modules/@jackmacwindows/craftos-types/craftos.d.ts b/node_modules/@jackmacwindows/craftos-types/craftos.d.ts
+index bf9908f..c4139b1 100755
+--- a/node_modules/@jackmacwindows/craftos-types/craftos.d.ts
++++ b/node_modules/@jackmacwindows/craftos-types/craftos.d.ts
+@@ -738,9 +738,9 @@ declare namespace turtle {
+   function attackUp(toolSide?: string): boolean;
+   function attackDown(toolSide?: string): boolean;
+ 
+-  function dig(toolSide?: string): boolean;
+-  function digUp(toolSide?: string): boolean;
+-  function digDown(toolSide?: string): boolean;
++  function dig(toolSide?: string): LuaMultiReturn<[boolean, string]>;
++  function digUp(toolSide?: string): LuaMultiReturn<[boolean, string]>;
++  function digDown(toolSide?: string): LuaMultiReturn<[boolean, string]>;
+ 
+   function place(toolSide?: string): boolean;
+   function placeUp(toolSide?: string): boolean;

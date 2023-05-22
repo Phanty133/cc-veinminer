@@ -1,24 +1,49 @@
+import { Block } from "./BlockMap";
+import DigController from "./DigController";
 import FuelController from "./FuelController";
-import InventoryController from "./InventoryController";
+import InventoryController, { BlacklistEntry } from "./InventoryController";
 import MovementController from "./MovementController";
+import SpatialMap from "./SpatialMap";
 import VeinMiner from "./VeinMiner";
-import { BlockId } from "./minecraft";
 
-function orePredicate(name: BlockId) {
-	return name.endsWith("ore");
+function orePredicate(block: Block) {
+	if (block === null) return false;
+
+	// Sometimes a nil gets past the check? dunno why; I'm not a Lua dev
+	try {
+		return block.name.endsWith("ore");
+	} catch {
+		return false;
+	}
 }
 
-const fuelController = new FuelController([
+const FUEL_WHITELIST = [
 	"minecraft:coal",
 	"minecraft:coal_block"
-], 500);
-const moveController = new MovementController(fuelController);
-const invController = new InventoryController([
+];
+
+const INV_CLEAR_BLACKLIST: BlacklistEntry[] = [
 	{ name: "minecraft:torch", maxCount: 64 },
 	{ name: "minecraft:coal", maxCount: 64 },
 	{ name: "minecraft:coal_block", maxCount: 64 },
-]);
-const miner = new VeinMiner(moveController, orePredicate, 5);
+];
+
+const FUEL_TARGET = 500;
+const SHAFT_DEPTH = 7;
+
+const fuelController = new FuelController(FUEL_WHITELIST, FUEL_TARGET);
+const moveController = new MovementController(fuelController);
+const spatialMap = new SpatialMap(moveController);
+const digController = new DigController(moveController, spatialMap);
+const invController = new InventoryController(INV_CLEAR_BLACKLIST);
+
+const miner = new VeinMiner(
+	moveController,
+	digController,
+	spatialMap,
+	orePredicate,
+	SHAFT_DEPTH
+);
 
 while (true) {
 	invController.sortInventory();

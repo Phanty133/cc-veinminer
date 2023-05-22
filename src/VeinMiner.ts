@@ -1,71 +1,33 @@
+import { Block } from "./BlockMap";
+import DigController from "./DigController";
 import { findFirstItem } from "./InventoryUtil";
 import MovementController from "./MovementController";
-import SpatialMap, { SurroundingBlocks } from "./SpatialMap";
+import SpatialMap, { BlockDirection, SurroundingBlocks } from "./SpatialMap";
 import { BlockId } from "./minecraft";
 
 export default class VeinMiner {
-	movement: MovementController;
-	map: SpatialMap;
+	private movement: MovementController;
+
+	private map: SpatialMap;
+	
+	private dig: DigController;
+
 	shaftDepth: number;
-	orePredicate: (name: BlockId) => boolean;
+	
+	orePredicate: (name: Block) => boolean;
 
 	constructor(
 		movement: MovementController,
-		orePredicate: (name: BlockId) => boolean,
-		shaftDepth = 5
+		dig: DigController,
+		map: SpatialMap,
+		orePredicate: (name: Block) => boolean,
+		shaftDepth = 7
 	) {
 		this.movement = movement;
-		this.map = new SpatialMap(movement);
+		this.dig = dig;
+		this.map = map;
 		this.shaftDepth = shaftDepth;
 		this.orePredicate = orePredicate;
-	}
-
-	private digUp() {
-		turtle.digUp();
-		this.map.map.removeBlock(this.movement.blockDirectionToCoordinates("TOP"));
-	}
-
-	private digDown() {
-		turtle.digDown();
-		this.map.map.removeBlock(this.movement.blockDirectionToCoordinates("BOTTOM"));
-	}
-
-	private dig() {
-		turtle.dig();
-		this.map.map.removeBlock(this.movement.blockDirectionToCoordinates("FRONT"));
-	}
-
-	private mineInBlockDirection(dir: keyof SurroundingBlocks) {
-		switch (dir) {
-			case "TOP":
-				this.digUp();
-				this.movement.forceUp();
-				break;
-			case "BOTTOM":
-				this.digDown();
-				this.movement.forceDown();
-				break;
-			case "LEFT":
-				this.movement.turnLeft();
-				this.dig();
-				this.movement.forceForward();
-				break;
-			case "RIGHT":
-				this.movement.turnRight();
-				this.dig();
-				this.movement.forceForward();
-				break;
-			case "FRONT":
-				this.dig();
-				this.movement.forceForward();
-				break;
-			case "REAR":
-				this.movement.turnLeft();
-				this.movement.turnLeft();
-				this.dig();
-				this.movement.forceForward();
-				break;
-		}
 	}
 
 	placeTorch() {
@@ -82,14 +44,11 @@ export default class VeinMiner {
 
 	mineForward(num = 1) {
 		for (let i = 0; i < num; i++) {
-			if (turtle.detect()) this.dig();
-
-			this.movement.forceForward();
+			this.dig.digMove("FRONT");
 			this.attemptMineOreVein();
 
 			if (turtle.detectUp()) {
-				this.digUp();
-				this.movement.forceUp();
+				this.dig.digMove("TOP");
 				this.attemptMineOreVein();
 				this.movement.forceDown();
 			}
@@ -104,14 +63,18 @@ export default class VeinMiner {
 			let oreDirection: keyof SurroundingBlocks | null = null;
 
 			for (const dir in blocks) {
-				if (this.orePredicate(blocks[dir])) {
-					oreDirection = dir as keyof SurroundingBlocks;
+				const block = blocks[dir] as Block;
+
+				if (this.orePredicate(block) && block.breakable) {
+					print("Breakable: ");
+					print(block.breakable);
+					oreDirection = dir as BlockDirection;
 					break;
 				}
 			}
 
 			if (oreDirection !== null) {
-				this.mineInBlockDirection(oreDirection);
+				this.dig.digMove(oreDirection);
 			} else {
 				// Revert unless already at the start position
 				if (this.movement.history.length === 0) break;
