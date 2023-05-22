@@ -11,7 +11,6 @@ A strip/vein mining program for ComputerCraft/CC: Tweaked mining turtles. Compil
 - Automatic inventory sorting to prevent the same item type unnecessarily taking up multiple slots.
 
 ## ToDo
-- [ ] Output program errors to text chat with Peripherals++
 - [ ] Automatically block off ground level and ceiling fluids
 - [ ] Ore vein distance failsafe to prevent the turtle from wandering off too far for any reason
 - [ ] Correctly handle unmineable blocks that match the ore predicate
