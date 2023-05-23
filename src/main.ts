@@ -9,9 +9,13 @@ import VeinMiner from "./VeinMiner";
 function orePredicate(block: Block) {
 	if (block === null) return false;
 
+	const ADDITIONAL_BLOCKS = [
+		"minecraft:ancient_debris",
+	];
+
 	// Sometimes a nil gets past the check? dunno why; I'm not a Lua dev
 	try {
-		return block.name.endsWith("ore");
+		return block.name.includes("ore") || ADDITIONAL_BLOCKS.includes(block.name);
 	} catch {
 		return false;
 	}
@@ -19,12 +23,15 @@ function orePredicate(block: Block) {
 
 const FUEL_WHITELIST = [
 	"minecraft:coal",
-	"minecraft:coal_block"
+	"minecraft:coal_block",
+	"minecraft:charcoal",
+	"minecraft:coal_block",
 ];
 
 const INV_CLEAR_BLACKLIST: BlacklistEntry[] = [
 	{ name: "minecraft:torch", maxCount: 64 },
 	{ name: "minecraft:coal", maxCount: 64 },
+	{ name: "minecraft:charcoal", maxCount: 64 },
 	{ name: "minecraft:coal_block", maxCount: 64 },
 ];
 
