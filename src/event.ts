@@ -1,3 +1,4 @@
+/* eslint-disable */
 // You may comment out any events you don't need to save space. Make sure to
 // delete them from eventInitializers as well.
 

@@ -49,9 +49,10 @@ const miner = new VeinMiner(
 	digController,
 	spatialMap,
 	orePredicate,
-	SHAFT_DEPTH
+	SHAFT_DEPTH,
 );
 
+// eslint-disable-next-line no-constant-condition
 while (true) {
 	invController.sortInventory();
 

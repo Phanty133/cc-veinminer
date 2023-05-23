@@ -8,9 +8,10 @@ const DIG_ERROR = {
 export type DigError = ObjectValues<typeof DIG_ERROR>;
 
 const ERROR_MAP: Record<string, DigError> = {
-	"Cannot break unbreakable block": DIG_ERROR.UNBREAKABLE
+	"Cannot break unbreakable block": DIG_ERROR.UNBREAKABLE,
 };
 
+/** Wraps the native digging functions and integrates them with movement and mapping. */
 export default class DigController {
 	private move: MovementController;
 
@@ -21,10 +22,16 @@ export default class DigController {
 		this.map = map;
 	}
 
+	/**
+	 * Attempts to dig forward if a block is there.
+	 * If the block is unbreakable, it will be marked as such in the spatial map.
+	 * @param ignoreMap Whether to update the block data in the spatial map
+	 * @returns True if successful
+	 */
 	digForward(ignoreMap = false) {
 		if (turtle.detect()) {
 			const [digSuccess, error] = turtle.dig();
-			
+
 			if (!digSuccess) {
 				if (ERROR_MAP[error] === DIG_ERROR.UNBREAKABLE) {
 					print("ERROR: Unable to break block!");
@@ -40,10 +47,16 @@ export default class DigController {
 		return true;
 	}
 
+	/**
+	 * Attempts to dig up if a block is there.
+	 * If the block is unbreakable, it will be marked as such in the spatial map.
+	 * @param ignoreMap Whether to update the block data in the spatial map
+	 * @returns True if successful
+	 */
 	digUp(ignoreMap = false) {
 		if (turtle.detectUp()) {
 			const [digSuccess, error] = turtle.digUp();
-			
+
 			if (!digSuccess) {
 				if (ERROR_MAP[error] === DIG_ERROR.UNBREAKABLE) {
 					print("ERROR: Unable to break block!");
@@ -59,10 +72,16 @@ export default class DigController {
 		return true;
 	}
 
+	/**
+	 * Attempts to dig down if a block is there.
+	 * If the block is unbreakable, it will be marked as such in the spatial map.
+	 * @param ignoreMap Whether to update the block data in the spatial map
+	 * @returns True if successful
+	 */
 	digDown(ignoreMap = false) {
 		if (turtle.detectDown()) {
 			const [digSuccess, error] = turtle.digDown();
-			
+
 			if (!digSuccess) {
 				if (ERROR_MAP[error] === DIG_ERROR.UNBREAKABLE) {
 					print("ERROR: Unable to break block!");
@@ -78,9 +97,20 @@ export default class DigController {
 		return true;
 	}
 
+	/**
+	 * Attempts to dig in an arbitrary direction.
+	 * If the direction is left, right, or rear, the turtle will rotate itself.
+	 * If the block is unbreakable, it will be marked as such in the spatial map.
+	 * @param dir Direction to dig in
+	 * @param ignoreMap Whether to update the block data in the spatial map
+	 * @param resetDirection Whether to reset direction after digging
+	 * @returns True if successful
+	 */
 	dig(dir: BlockDirection, ignoreMap = false, resetDirection = false): boolean {
 		let success: boolean;
 
+		// TODO: Switch to safety-match
+		// eslint-disable-next-line default-case
 		switch (dir) {
 			case "TOP":
 				success = this.digUp(ignoreMap);
@@ -114,6 +144,13 @@ export default class DigController {
 		return success;
 	}
 
+	/**
+	 * Attempts to dig and move in a direction.
+	 * If the block is unbreakable, it will be marked as such in the spatial map and the move will fail.
+	 * @param dir Direction to dig and move in
+	 * @param ignoreMap Whether to update the block data in the spatial map
+	 * @returns True if successful
+	 */
 	digMove(dir: BlockDirection, ignoreMap = false): boolean {
 		const success = this.dig(dir, ignoreMap);
 

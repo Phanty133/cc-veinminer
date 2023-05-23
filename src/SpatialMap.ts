@@ -1,11 +1,10 @@
 import BlockMap, { Block } from "./BlockMap";
 import MovementController, { rotateDirection } from "./MovementController";
-import { BlockId } from "./minecraft";
 
 export type BlockDirection = "FRONT" | "TOP" | "BOTTOM" | "LEFT" | "REAR" | "RIGHT";
 export type SurroundingBlocks = { [k in BlockDirection]: Block };
 
-// Stores spatial information relative to start position
+/** Stores spatial information relative to the turtle's start position */
 export default class SpatialMap {
 	private move: MovementController;
 
@@ -15,10 +14,14 @@ export default class SpatialMap {
 		this.move = movement;
 	}
 
-	private addFrontBlockToMap() {
+	/**
+	 * Adds the block in front to the block map
+	 * @returns Block data that was added, `null` if no block added
+	 */
+	private addFrontBlockToMap(): Block | null {
 		const blockAttempt = turtle.inspect();
 
-		if (!blockAttempt[0]) return;
+		if (!blockAttempt[0]) return null;
 
 		const { name } = blockAttempt[1] as { name: string };
 		const blockPos = this.blockDirectionToCoordinates("FRONT");
@@ -26,10 +29,14 @@ export default class SpatialMap {
 		return this.map.setBlock(blockPos, name);
 	}
 
-	private addTopBlockToMap() {
+	/**
+	 * Adds the upward block to the block map
+	 * @returns Block data that was added, `null` if no block added
+	 */
+	private addTopBlockToMap(): Block | null {
 		const blockAttempt = turtle.inspectUp();
 
-		if (!blockAttempt[0]) return;
+		if (!blockAttempt[0]) return null;
 
 		const { name } = blockAttempt[1] as { name: string };
 		const blockPos = this.move.pos.add(new Vector(0, 1, 0));
@@ -37,10 +44,14 @@ export default class SpatialMap {
 		return this.map.setBlock(blockPos, name);
 	}
 
-	private addBottomBlockToMap() {
+	/**
+	 * Adds the bottom block to the block map
+	 * @returns Block data that was added, `null` if no block added
+	 */
+	private addBottomBlockToMap(): Block | null {
 		const blockAttempt = turtle.inspectDown();
 
-		if (!blockAttempt[0]) return;
+		if (!blockAttempt[0]) return null;
 
 		const { name } = blockAttempt[1] as { name: string };
 		const blockPos = this.move.pos.add(new Vector(0, -1, 0));
@@ -48,7 +59,15 @@ export default class SpatialMap {
 		return this.map.setBlock(blockPos, name);
 	}
 
+	/**
+	 * Converts block direction to coordinates relative to the turtle's starting position.
+	 * @param dir Direction of the block relative to the current turtle's direction
+	 * @returns Vector position of the block
+	 */
+	// eslint-disable-next-line consistent-return
 	blockDirectionToCoordinates(dir: BlockDirection): Vector {
+		// TODO: Switch to safety-match
+		// eslint-disable-next-line default-case
 		switch (dir) {
 			case "FRONT":
 				return this.move.pos.add(this.move.direction);
@@ -65,18 +84,37 @@ export default class SpatialMap {
 		}
 	}
 
+	/**
+	 * Gets a block in a direction
+	 * @param dir Direction of the block relative to the current turtle's direction
+	 * @returns Block data if found, null if no block.
+	 */
 	getBlock(dir: BlockDirection): Block | null {
 		return this.map.getBlockEntry(this.blockDirectionToCoordinates(dir));
 	}
 
+	/**
+	 * Removes a block in a direction from the map
+	 * @param dir Direction of the block relative to the current turtle's direction
+	 * @returns True if delete successful
+	 */
 	removeBlock(dir: BlockDirection): boolean {
 		return this.map.removeBlock(this.blockDirectionToCoordinates(dir));
 	}
 
+	/**
+	 * Marks a block in a direction as unbreakable
+	 * @param dir Direction of the block relative to the current turtle's direction
+	 * @returns True if block successfully marked as unbreakable
+	 */
 	setBlockUnbreakable(dir: BlockDirection): boolean {
 		return this.map.setUnbreakable(this.blockDirectionToCoordinates(dir));
 	}
 
+	/**
+	 * Returns the blocks currently surrounding the turtle
+	 * @returns Block data of the surrounding blocks
+	 */
 	getSurroundings(): SurroundingBlocks {
 		const out: Partial<SurroundingBlocks> = {};
 
@@ -130,8 +168,12 @@ export default class SpatialMap {
 		return out as SurroundingBlocks;
 	}
 
+	/**
+	 * Pretty-prints surrounding blocks
+	 * @param blocks Surrounding block the data to print
+	 */
 	static printBlocks(blocks: SurroundingBlocks) {
-		for (const k in blocks) {
+		for (const k of Object.keys(blocks)) {
 			print(`${k}: ${blocks[k]}`);
 		}
 	}
