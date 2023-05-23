@@ -1,28 +1,51 @@
 import { findFirstItem, getItem } from "./InventoryUtil";
-
-const ENDER_CHEST_ID = "enderchests:ender_chest";
+import { BlockId } from "./minecraft";
 
 export interface BlacklistEntry {
+	/** Item ID of item to blacklist */
 	name: string,
+
+	/** Maximum number of items to keep. Overflow will get cleared. */
 	maxCount?: number,
 }
 
+/** Manages the turtle inventory */
 export default class InventoryController {
 	blacklist: BlacklistEntry[];
 
-	constructor(clearBlacklist: BlacklistEntry[]) {
-		this.blacklist = [...clearBlacklist, { name: ENDER_CHEST_ID }];
+	enderChestId: BlockId;
+
+	/**
+	 * Initializes InventoryController
+	 * @param clearBlacklist Array of blacklisted items
+	 * @param enderChestId ID of the ender chest to use. Defaults to ender chest from Ender Chests
+	 */
+	constructor(
+		clearBlacklist: BlacklistEntry[],
+		enderChestId: BlockId = "enderchests:ender_chest",
+	) {
+		this.enderChestId = enderChestId;
+		this.blacklist = [...clearBlacklist, { name: enderChestId }];
 
 		if (!this.findEnderChest()) {
 			print("WARNING: No ender chest in inventory");
 		}
 	}
 
+	/**
+	 * Finds the ender chest in the inventory
+	 * @returns Slot with ender chest. `null` if no ender chest found.
+	 */
 	// eslint-disable-next-line class-methods-use-this
 	private findEnderChest() {
-		return findFirstItem((name) => name === ENDER_CHEST_ID)?.slot ?? null;
+		return findFirstItem((item) => item.name === this.enderChestId)?.slot ?? null;
 	}
 
+	/**
+	 * Place the ender chest behind the turtle
+	 * @param force If true, the turtle will attempt to dig out blocks if the placement fails
+	 * @returns True if chest placed
+	 */
 	private placeChest(force = true): boolean {
 		const chestSlot = this.findEnderChest();
 
@@ -39,6 +62,9 @@ export default class InventoryController {
 		return true;
 	}
 
+	/**
+	 * Combines non-full item stacks.
+	 */
 	// eslint-disable-next-line class-methods-use-this
 	sortInventory() {
 		for (let slot = 1; slot <= 16; slot++) {
@@ -57,6 +83,10 @@ export default class InventoryController {
 		}
 	}
 
+	/**
+	 * Clears the inventory into the ender chest.
+	 * @returns True if inventory cleared.
+	 */
 	clearInventory(): boolean {
 		if (!this.placeChest()) return false;
 

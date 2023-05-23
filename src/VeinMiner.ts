@@ -4,6 +4,9 @@ import { findFirstItem } from "./InventoryUtil";
 import MovementController from "./MovementController";
 import SpatialMap, { BlockDirection, SurroundingBlocks } from "./SpatialMap";
 
+/**
+ * Strip/vein mining controller
+ */
 export default class VeinMiner {
 	private movement: MovementController;
 
@@ -11,10 +14,19 @@ export default class VeinMiner {
 
 	private dig: DigController;
 
+	/** Horizontal shaft length */
 	shaftDepth: number;
 
 	orePredicate: (name: Block) => boolean;
 
+	/**
+	 * Initializes the miner
+	 * @param movement Movement controller
+	 * @param dig Dig controller
+	 * @param map Spatial map
+	 * @param orePredicate Predicate to use to match for ores and other blocks of interest
+	 * @param shaftDepth Length of the horizontal shafts
+	 */
 	constructor(
 		movement: MovementController,
 		dig: DigController,
@@ -30,9 +42,12 @@ export default class VeinMiner {
 	}
 
 	// TODO: Make separate torch placer class with placement optimization
+	/**
+	 * Place torch upward
+	 */
 	// eslint-disable-next-line class-methods-use-this
 	placeTorch() {
-		const torch = findFirstItem((name) => name === "minecraft:torch");
+		const torch = findFirstItem((item) => item.name === "minecraft:torch");
 
 		if (torch === null) {
 			print("WARNING: Out of torches");
@@ -43,6 +58,10 @@ export default class VeinMiner {
 		turtle.placeUp();
 	}
 
+	/**
+	 * Mine forward for `num` blocks
+	 * @param num How many blocks to mine
+	 */
 	mineForward(num = 1) {
 		for (let i = 0; i < num; i++) {
 			this.dig.digMove("FRONT");
@@ -56,6 +75,12 @@ export default class VeinMiner {
 		}
 	}
 
+	/**
+	 * Looks for neighboring blocks that match `orePredicate`.
+	 * If a matching block is found, mine it out and move to the ore's location.
+	 * Continue looking and mining until no blocks of interest are found.
+	 * Reverts to the position the method was called in after finishing.
+	 */
 	attemptMineOreVein() {
 		this.movement.trackHistory = true;
 
@@ -89,6 +114,9 @@ export default class VeinMiner {
 		this.movement.trackHistory = false;
 	}
 
+	/**
+	 * Mines a full Forward/Left-Right shaft iteration.
+	 */
 	mineIteration() {
 		for (let i = 0; i < 3; i++) {
 			this.mineForward();
