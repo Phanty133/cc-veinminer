@@ -8,7 +8,7 @@ const DIG_ERROR = {
 export type DigError = ObjectValues<typeof DIG_ERROR>;
 
 const ERROR_MAP: Record<string, DigError> = {
-	"Cannot break unbreakable block": DIG_ERROR.UNBREAKABLE
+	"Cannot break unbreakable block": DIG_ERROR.UNBREAKABLE,
 };
 
 export default class DigController {
@@ -24,7 +24,7 @@ export default class DigController {
 	digForward(ignoreMap = false) {
 		if (turtle.detect()) {
 			const [digSuccess, error] = turtle.dig();
-			
+
 			if (!digSuccess) {
 				if (ERROR_MAP[error] === DIG_ERROR.UNBREAKABLE) {
 					print("ERROR: Unable to break block!");
@@ -43,7 +43,7 @@ export default class DigController {
 	digUp(ignoreMap = false) {
 		if (turtle.detectUp()) {
 			const [digSuccess, error] = turtle.digUp();
-			
+
 			if (!digSuccess) {
 				if (ERROR_MAP[error] === DIG_ERROR.UNBREAKABLE) {
 					print("ERROR: Unable to break block!");
@@ -62,7 +62,7 @@ export default class DigController {
 	digDown(ignoreMap = false) {
 		if (turtle.detectDown()) {
 			const [digSuccess, error] = turtle.digDown();
-			
+
 			if (!digSuccess) {
 				if (ERROR_MAP[error] === DIG_ERROR.UNBREAKABLE) {
 					print("ERROR: Unable to break block!");
@@ -81,6 +81,8 @@ export default class DigController {
 	dig(dir: BlockDirection, ignoreMap = false, resetDirection = false): boolean {
 		let success: boolean;
 
+		// TODO: Switch to safety-match
+		// eslint-disable-next-line default-case
 		switch (dir) {
 			case "TOP":
 				success = this.digUp(ignoreMap);

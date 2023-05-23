@@ -18,6 +18,7 @@ export default class InventoryController {
 		}
 	}
 
+	// eslint-disable-next-line class-methods-use-this
 	private findEnderChest() {
 		return findFirstItem((name) => name === ENDER_CHEST_ID)?.slot ?? null;
 	}
@@ -38,6 +39,7 @@ export default class InventoryController {
 		return true;
 	}
 
+	// eslint-disable-next-line class-methods-use-this
 	sortInventory() {
 		for (let slot = 1; slot <= 16; slot++) {
 			const item = getItem(slot);
@@ -62,9 +64,8 @@ export default class InventoryController {
 			const item = getItem(slot);
 
 			if (item) {
-				const blacklistEntry = this.blacklist.find(e => e.name === item.name);
-				let valid = blacklistEntry === undefined;
-				let itemOverflow: number | undefined = undefined;
+				const blacklistEntry = this.blacklist.find((e) => e.name === item.name);
+				let itemOverflow: number | undefined;
 
 				if (blacklistEntry?.maxCount !== undefined) {
 					const overflowNum = Number(item.count) - blacklistEntry.maxCount;
@@ -72,7 +73,7 @@ export default class InventoryController {
 					if (overflowNum > 0) itemOverflow = overflowNum;
 				}
 
-				if (valid || itemOverflow !== undefined) {
+				if (blacklistEntry === undefined || itemOverflow !== undefined) {
 					turtle.select(slot);
 					turtle.drop(itemOverflow as any);
 				}
@@ -83,8 +84,11 @@ export default class InventoryController {
 		turtle.dig();
 		turtle.turnLeft();
 		turtle.turnLeft();
+
+		return true;
 	}
 
+	// eslint-disable-next-line class-methods-use-this
 	isInventoryFull(): boolean {
 		let full = true;
 

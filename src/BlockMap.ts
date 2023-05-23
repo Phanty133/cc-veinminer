@@ -41,7 +41,7 @@ export default class BlockMap {
 		const newBlockVal: Block = {
 			name,
 			checked: true,
-			breakable: true
+			breakable: true,
 		};
 
 		if (block === null) {
@@ -67,6 +67,8 @@ export default class BlockMap {
 		print("INFO: Block set unbreakable");
 
 		this.blocks[pos.x][pos.y][pos.z].breakable = false;
+
+		return true;
 	}
 
 	removeBlock(pos: Vector): boolean {

@@ -3,17 +3,16 @@ import DigController from "./DigController";
 import { findFirstItem } from "./InventoryUtil";
 import MovementController from "./MovementController";
 import SpatialMap, { BlockDirection, SurroundingBlocks } from "./SpatialMap";
-import { BlockId } from "./minecraft";
 
 export default class VeinMiner {
 	private movement: MovementController;
 
 	private map: SpatialMap;
-	
+
 	private dig: DigController;
 
 	shaftDepth: number;
-	
+
 	orePredicate: (name: Block) => boolean;
 
 	constructor(
@@ -21,7 +20,7 @@ export default class VeinMiner {
 		dig: DigController,
 		map: SpatialMap,
 		orePredicate: (name: Block) => boolean,
-		shaftDepth = 7
+		shaftDepth = 7,
 	) {
 		this.movement = movement;
 		this.dig = dig;
@@ -30,6 +29,8 @@ export default class VeinMiner {
 		this.orePredicate = orePredicate;
 	}
 
+	// TODO: Make separate torch placer class with placement optimization
+	// eslint-disable-next-line class-methods-use-this
 	placeTorch() {
 		const torch = findFirstItem((name) => name === "minecraft:torch");
 
@@ -54,15 +55,17 @@ export default class VeinMiner {
 			}
 		}
 	}
-	
+
 	attemptMineOreVein() {
 		this.movement.trackHistory = true;
 
+		// TODO: Make condition non-constant
+		// eslint-disable-next-line no-constant-condition
 		while (true) {
 			const blocks = this.map.getSurroundings();
 			let oreDirection: keyof SurroundingBlocks | null = null;
 
-			for (const dir in blocks) {
+			for (const dir of Object.keys(blocks)) {
 				const block = blocks[dir] as Block;
 
 				if (this.orePredicate(block) && block.breakable) {
@@ -85,7 +88,7 @@ export default class VeinMiner {
 
 		this.movement.trackHistory = false;
 	}
-	
+
 	mineIteration() {
 		for (let i = 0; i < 3; i++) {
 			this.mineForward();

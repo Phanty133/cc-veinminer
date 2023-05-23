@@ -3,6 +3,7 @@ import type { BlockId } from "./minecraft";
 
 export default class FuelController {
 	whitelist: BlockId[];
+
 	minLevel: number;
 
 	constructor(fuelWhitelist: BlockId[], minFuelLevel) {

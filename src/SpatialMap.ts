@@ -1,6 +1,5 @@
 import BlockMap, { Block } from "./BlockMap";
 import MovementController, { rotateDirection } from "./MovementController";
-import { BlockId } from "./minecraft";
 
 export type BlockDirection = "FRONT" | "TOP" | "BOTTOM" | "LEFT" | "REAR" | "RIGHT";
 export type SurroundingBlocks = { [k in BlockDirection]: Block };
@@ -15,10 +14,10 @@ export default class SpatialMap {
 		this.move = movement;
 	}
 
-	private addFrontBlockToMap() {
+	private addFrontBlockToMap(): Block | null {
 		const blockAttempt = turtle.inspect();
 
-		if (!blockAttempt[0]) return;
+		if (!blockAttempt[0]) return null;
 
 		const { name } = blockAttempt[1] as { name: string };
 		const blockPos = this.blockDirectionToCoordinates("FRONT");
@@ -26,10 +25,10 @@ export default class SpatialMap {
 		return this.map.setBlock(blockPos, name);
 	}
 
-	private addTopBlockToMap() {
+	private addTopBlockToMap(): Block | null {
 		const blockAttempt = turtle.inspectUp();
 
-		if (!blockAttempt[0]) return;
+		if (!blockAttempt[0]) return null;
 
 		const { name } = blockAttempt[1] as { name: string };
 		const blockPos = this.move.pos.add(new Vector(0, 1, 0));
@@ -37,10 +36,10 @@ export default class SpatialMap {
 		return this.map.setBlock(blockPos, name);
 	}
 
-	private addBottomBlockToMap() {
+	private addBottomBlockToMap(): Block | null {
 		const blockAttempt = turtle.inspectDown();
 
-		if (!blockAttempt[0]) return;
+		if (!blockAttempt[0]) return null;
 
 		const { name } = blockAttempt[1] as { name: string };
 		const blockPos = this.move.pos.add(new Vector(0, -1, 0));
@@ -48,7 +47,10 @@ export default class SpatialMap {
 		return this.map.setBlock(blockPos, name);
 	}
 
+	// eslint-disable-next-line consistent-return
 	blockDirectionToCoordinates(dir: BlockDirection): Vector {
+		// TODO: Switch to safety-match
+		// eslint-disable-next-line default-case
 		switch (dir) {
 			case "FRONT":
 				return this.move.pos.add(this.move.direction);
@@ -131,7 +133,7 @@ export default class SpatialMap {
 	}
 
 	static printBlocks(blocks: SurroundingBlocks) {
-		for (const k in blocks) {
+		for (const k of Object.keys(blocks)) {
 			print(`${k}: ${blocks[k]}`);
 		}
 	}

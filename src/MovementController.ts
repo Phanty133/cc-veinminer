@@ -1,6 +1,5 @@
 import FuelController from "./FuelController";
 import MovementHistory, { MoveAction } from "./MovementHistory";
-import { BlockDirection, SurroundingBlocks } from "./SpatialMap";
 
 // 1 - left, -1 right
 export function rotateDirection(direction: Vector, rotate: number) {
@@ -21,24 +20,28 @@ export function rotateDirection(direction: Vector, rotate: number) {
 // Manages movement and tracks position and direction
 export default class MovementController {
 	_pos: Vector; // Relative position
+
 	_direction: Vector; // Relative direction
 
 	public get pos() { return this._pos; }
+
 	private set pos(val: Vector) { this._pos = val; }
 
 	public get direction() { return this._direction; }
+
 	private set direction(val: Vector) { this._direction = val; }
 
 	readonly history = new MovementHistory();
+
 	trackHistory: boolean = false;
 
 	readonly historyActionMap: { [k in MoveAction]: () => boolean } = {
-		"BACK": () => { return this.back(); },
-		"DOWN": () => { return this.down(); },
-		"FORWARD": () => { return this.forward(); },
-		"UP": () => { return this.up(); },
-		"TURN_LEFT": () => { return this.turnLeft(); },
-		"TURN_RIGHT": () => { return this.turnRight(); }
+		BACK: () => this.back(),
+		DOWN: () => this.down(),
+		FORWARD: () => this.forward(),
+		UP: () => this.up(),
+		TURN_LEFT: () => this.turnLeft(),
+		TURN_RIGHT: () => this.turnRight(),
 	};
 
 	fuel: FuelController;
@@ -178,7 +181,7 @@ export default class MovementController {
 	}
 
 	forceUp(blocks = 1) {
-		for (let i = 0; i < blocks; i++) {			
+		for (let i = 0; i < blocks; i++) {
 			while (!this.upFueled()) {
 				turtle.digUp();
 			}
