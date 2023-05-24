@@ -1,6 +1,6 @@
 import type { BlockId } from "./minecraft";
 
-export interface Block {
+export interface MappedBlock {
 	name: BlockId | null,
 	checked: boolean,
 	breakable: boolean,
@@ -9,7 +9,7 @@ export interface Block {
 /** Maps a Vector coordinate to a known block */
 export default class BlockMap {
 	/** {x: {y: {z: ID}}} */
-	private blocks: Record<number, Record<number, Record<number, Block>>>;
+	private blocks: Record<number, Record<number, Record<number, MappedBlock>>>;
 
 	/**
 	 * Initialize the map
@@ -23,7 +23,7 @@ export default class BlockMap {
 	 * @param pos Relative coordinate to check
 	 * @returns The block data if known, null otherwise
 	 */
-	getBlockEntry(pos: Vector): Block | null {
+	getBlockEntry(pos: Vector): MappedBlock | null {
 		const x = this.blocks[pos.x];
 
 		if (!x) return null;
@@ -42,9 +42,9 @@ export default class BlockMap {
 	 * @param name New block name to update
 	 * @returns Block data that was added
 	 */
-	setBlock(pos: Vector, name: BlockId) {
+	setBlock(pos: Vector, name: BlockId | null) {
 		const block = this.getBlockEntry(pos);
-		const newBlockVal: Block = {
+		const newBlockVal: MappedBlock = {
 			name,
 			checked: true,
 			breakable: true,
