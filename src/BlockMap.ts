@@ -42,7 +42,7 @@ export default class BlockMap {
 	 * @param name New block name to update
 	 * @returns Block data that was added
 	 */
-	setBlock(pos: Vector, name: BlockId) {
+	setBlock(pos: Vector, name: BlockId | null) {
 		const block = this.getBlockEntry(pos);
 		const newBlockVal: MappedBlock = {
 			name,

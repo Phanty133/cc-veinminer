@@ -77,7 +77,7 @@ export default class VeinMiner {
 
 			this.dig.digMove("TOP");
 			this.attemptMineOreVein();
-			// this.pathBuilder.ensureNoLiquidBlock();
+			this.pathBuilder.ensureNoLiquidBlock();
 			this.movement.forceDown();
 		}
 	}
