@@ -1,4 +1,4 @@
-import { findFirstItem, getItem } from "./InventoryUtil";
+import { findFirstItem, forSlot, getItem } from "./InventoryUtil";
 import { BlockId } from "./minecraft";
 
 export interface BlacklistEntry {
@@ -36,7 +36,6 @@ export default class InventoryController {
 	 * Finds the ender chest in the inventory
 	 * @returns Slot with ender chest. `null` if no ender chest found.
 	 */
-	// eslint-disable-next-line class-methods-use-this
 	private findEnderChest() {
 		return findFirstItem((item) => item.name === this.enderChestId)?.slot ?? null;
 	}
@@ -67,20 +66,16 @@ export default class InventoryController {
 	 */
 	// eslint-disable-next-line class-methods-use-this
 	sortInventory() {
-		for (let slot = 1; slot <= 16; slot++) {
-			const item = getItem(slot);
-
+		forSlot((slot, item) => {
 			if (item) {
-				for (let otherSlot = slot + 1; otherSlot <= 16; otherSlot++) {
-					const otherItem = getItem(otherSlot);
-
+				forSlot((otherSlot, otherItem) => {
 					if (otherItem?.name === item.name && otherItem?.nbt === item?.nbt) {
 						turtle.select(otherSlot);
 						turtle.transferTo(slot);
 					}
-				}
+				});
 			}
-		}
+		});
 	}
 
 	/**
@@ -90,9 +85,7 @@ export default class InventoryController {
 	clearInventory(): boolean {
 		if (!this.placeChest()) return false;
 
-		for (let slot = 1; slot <= 16; slot++) {
-			const item = getItem(slot);
-
+		forSlot((slot, item) => {
 			if (item) {
 				const blacklistEntry = this.blacklist.find((e) => e.name === item.name);
 				let itemOverflow: number | undefined;
@@ -108,7 +101,7 @@ export default class InventoryController {
 					turtle.drop(itemOverflow as any);
 				}
 			}
-		}
+		});
 
 		// Turn back around after removing the chest
 		turtle.dig();

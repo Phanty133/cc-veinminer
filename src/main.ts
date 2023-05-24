@@ -1,12 +1,13 @@
-import { Block } from "./BlockMap";
+import { MappedBlock } from "./BlockMap";
 import DigController from "./DigController";
 import FuelController from "./FuelController";
 import InventoryController, { BlacklistEntry } from "./InventoryController";
 import MovementController from "./MovementController";
 import SpatialMap from "./SpatialMap";
 import VeinMiner from "./VeinMiner";
+import PathBuilder from "./PathBuilder";
 
-function orePredicate(block: Block) {
+function orePredicate(block: MappedBlock) {
 	if (block === null) return false;
 
 	const ADDITIONAL_BLOCKS = [
@@ -35,6 +36,15 @@ const INV_CLEAR_BLACKLIST: BlacklistEntry[] = [
 	{ name: "minecraft:coal_block", maxCount: 64 },
 ];
 
+const BUILDING_BLOCKS = [
+	"minecraft:cobblestone",
+];
+
+const FLUID_BLOCKS = [
+	"minecraft:water",
+	"minecraft:lava",
+];
+
 const FUEL_TARGET = 500;
 const SHAFT_DEPTH = 7;
 
@@ -44,10 +54,17 @@ const spatialMap = new SpatialMap(moveController);
 const digController = new DigController(moveController, spatialMap);
 const invController = new InventoryController(INV_CLEAR_BLACKLIST);
 
+const pathBuilder = new PathBuilder(
+	BUILDING_BLOCKS,
+	FLUID_BLOCKS,
+	moveController,
+	spatialMap,
+);
 const miner = new VeinMiner(
 	moveController,
 	digController,
 	spatialMap,
+	pathBuilder,
 	orePredicate,
 	SHAFT_DEPTH,
 );

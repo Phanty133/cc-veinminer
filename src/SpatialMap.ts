@@ -1,8 +1,8 @@
-import BlockMap, { Block } from "./BlockMap";
+import BlockMap, { MappedBlock } from "./BlockMap";
 import MovementController, { rotateDirection } from "./MovementController";
 
 export type BlockDirection = "FRONT" | "TOP" | "BOTTOM" | "LEFT" | "REAR" | "RIGHT";
-export type SurroundingBlocks = { [k in BlockDirection]: Block };
+export type SurroundingBlocks = { [k in BlockDirection]: MappedBlock };
 
 /** Stores spatial information relative to the turtle's start position */
 export default class SpatialMap {
@@ -18,7 +18,7 @@ export default class SpatialMap {
 	 * Adds the block in front to the block map
 	 * @returns Block data that was added, `null` if no block added
 	 */
-	private addFrontBlockToMap(): Block | null {
+	private addFrontBlockToMap(): MappedBlock | null {
 		const blockAttempt = turtle.inspect();
 
 		if (!blockAttempt[0]) return null;
@@ -33,7 +33,7 @@ export default class SpatialMap {
 	 * Adds the upward block to the block map
 	 * @returns Block data that was added, `null` if no block added
 	 */
-	private addTopBlockToMap(): Block | null {
+	private addTopBlockToMap(): MappedBlock | null {
 		const blockAttempt = turtle.inspectUp();
 
 		if (!blockAttempt[0]) return null;
@@ -48,7 +48,7 @@ export default class SpatialMap {
 	 * Adds the bottom block to the block map
 	 * @returns Block data that was added, `null` if no block added
 	 */
-	private addBottomBlockToMap(): Block | null {
+	private addBottomBlockToMap(): MappedBlock | null {
 		const blockAttempt = turtle.inspectDown();
 
 		if (!blockAttempt[0]) return null;
@@ -89,7 +89,7 @@ export default class SpatialMap {
 	 * @param dir Direction of the block relative to the current turtle's direction
 	 * @returns Block data if found, null if no block.
 	 */
-	getBlock(dir: BlockDirection): Block | null {
+	getBlock(dir: BlockDirection): MappedBlock | null {
 		return this.map.getBlockEntry(this.blockDirectionToCoordinates(dir));
 	}
 
@@ -117,6 +117,11 @@ export default class SpatialMap {
 	 */
 	getSurroundings(): SurroundingBlocks {
 		const out: Partial<SurroundingBlocks> = {};
+
+		for (const k of Object.keys(out)) {
+			print(Object.keys(out).length);
+			print(`${k}: ${out[k].checked}`);
+		}
 
 		out.FRONT = this.addFrontBlockToMap();
 		out.TOP = this.addTopBlockToMap();

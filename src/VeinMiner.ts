@@ -1,7 +1,8 @@
-import { Block } from "./BlockMap";
+import { MappedBlock } from "./BlockMap";
 import DigController from "./DigController";
 import { findFirstItem } from "./InventoryUtil";
 import MovementController from "./MovementController";
+import PathBuilder from "./PathBuilder";
 import SpatialMap, { BlockDirection, SurroundingBlocks } from "./SpatialMap";
 
 /**
@@ -14,16 +15,19 @@ export default class VeinMiner {
 
 	private dig: DigController;
 
+	private pathBuilder: PathBuilder;
+
 	/** Horizontal shaft length */
 	shaftDepth: number;
 
-	orePredicate: (name: Block) => boolean;
+	orePredicate: (name: MappedBlock) => boolean;
 
 	/**
 	 * Initializes the miner
 	 * @param movement Movement controller
 	 * @param dig Dig controller
 	 * @param map Spatial map
+	 * @param pathBuilder Path Builder
 	 * @param orePredicate Predicate to use to match for ores and other blocks of interest
 	 * @param shaftDepth Length of the horizontal shafts
 	 */
@@ -31,12 +35,14 @@ export default class VeinMiner {
 		movement: MovementController,
 		dig: DigController,
 		map: SpatialMap,
-		orePredicate: (name: Block) => boolean,
+		pathBuilder: PathBuilder,
+		orePredicate: (name: MappedBlock) => boolean,
 		shaftDepth = 7,
 	) {
 		this.movement = movement;
 		this.dig = dig;
 		this.map = map;
+		this.pathBuilder = pathBuilder;
 		this.shaftDepth = shaftDepth;
 		this.orePredicate = orePredicate;
 	}
@@ -66,12 +72,13 @@ export default class VeinMiner {
 		for (let i = 0; i < num; i++) {
 			this.dig.digMove("FRONT");
 			this.attemptMineOreVein();
+			this.pathBuilder.ensurePathBlock();
+			this.pathBuilder.ensureNoLiquidBlock();
 
-			if (turtle.detectUp()) {
-				this.dig.digMove("TOP");
-				this.attemptMineOreVein();
-				this.movement.forceDown();
-			}
+			this.dig.digMove("TOP");
+			this.attemptMineOreVein();
+			// this.pathBuilder.ensureNoLiquidBlock();
+			this.movement.forceDown();
 		}
 	}
 
@@ -91,11 +98,9 @@ export default class VeinMiner {
 			let oreDirection: keyof SurroundingBlocks | null = null;
 
 			for (const dir of Object.keys(blocks)) {
-				const block = blocks[dir] as Block;
+				const block = blocks[dir] as MappedBlock;
 
 				if (this.orePredicate(block) && block.breakable) {
-					print("Breakable: ");
-					print(block.breakable);
 					oreDirection = dir as BlockDirection;
 					break;
 				}
