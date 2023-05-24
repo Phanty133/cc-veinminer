@@ -62,16 +62,6 @@ export default class BlockMap {
 			this.blocks[pos.x][pos.y][pos.z] = newBlockVal;
 		}
 
-		let mappedBlocks = 0;
-
-		for (const x of Object.keys(this.blocks)) {
-			for (const y of Object.keys(this.blocks[x])) {
-				mappedBlocks += Object.keys(this.blocks[x][y]).length ?? 0;
-			}
-		}
-
-		print(mappedBlocks);
-
 		return newBlockVal;
 	}
 
