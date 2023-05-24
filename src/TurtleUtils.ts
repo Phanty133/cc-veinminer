@@ -24,4 +24,24 @@ export namespace TurtleUtils {
 
 		return data as Block;
 	}
+
+	export function dropDirection(dir: "front" | "up" | "down", count?: number) {
+		if (dir === "front") {
+			turtle.drop(count);
+		} else if (dir === "down") {
+			turtle.dropDown(count);
+		} else {
+			turtle.dropUp(count);
+		}
+	}
+
+	export function suckDirection(dir: "front" | "up" | "down", count?: number) {
+		if (dir === "front") {
+			turtle.suck(count);
+		} else if (dir === "down") {
+			turtle.suckDown(count);
+		} else {
+			turtle.suckUp(count);
+		}
+	}
 }
