@@ -54,11 +54,11 @@ const FLUID_BLOCKS = [
 const FUEL_TARGET = 500;
 const SHAFT_DEPTH = 7;
 
-const fuelController = new FuelController(FUEL_WHITELIST, FUEL_TARGET);
+const invController = new InventoryController(INV_CLEAR_BLACKLIST, INV_RESUPPLY);
+const fuelController = new FuelController(FUEL_WHITELIST, FUEL_TARGET, invController);
 const moveController = new MovementController(fuelController);
 const spatialMap = new SpatialMap(moveController);
 const digController = new DigController(moveController, spatialMap);
-const invController = new InventoryController(INV_CLEAR_BLACKLIST, INV_RESUPPLY);
 
 const pathBuilder = new PathBuilder(
 	BUILDING_BLOCKS,
@@ -75,15 +75,13 @@ const miner = new VeinMiner(
 	SHAFT_DEPTH,
 );
 
-invController.refreshInventory();
-
 // eslint-disable-next-line no-constant-condition
-// while (true) {
-// 	invController.sortInventory();
+while (true) {
+	invController.sortInventory();
 
-// 	if (invController.isInventoryFull()) {
-// 		invController.clearInventory();
-// 	}
+	if (invController.isInventoryFull()) {
+		invController.refreshInventory();
+	}
 
-// 	miner.mineIteration();
-// }
+	miner.mineIteration();
+}

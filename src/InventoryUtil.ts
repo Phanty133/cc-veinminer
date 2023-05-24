@@ -58,6 +58,11 @@ export function findFirstEmpty(): number | null {
 	return null;
 }
 
+/**
+ * Counts the number of items with ID in inventory
+ * @param name Item ID
+ * @returns Number of items in the turtle's inventory
+ */
 export function countItemInInventory(name: string): number {
 	let count = 0;
 

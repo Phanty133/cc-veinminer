@@ -146,7 +146,7 @@ export default class InventoryController {
 
 			if (missingItems > 0) quotaMet = false;
 			if (supplyItemQuota > 0) {
-				print(`INFO: Resupplied ${supplyItemQuota.toString()} ${supplyItem.name}`);
+				print(`INFO: Resupplied ${(supplyItemQuota - missingItems).toString()} ${supplyItem.name}`);
 			}
 		}
 
@@ -200,6 +200,10 @@ export default class InventoryController {
 		return true;
 	}
 
+	/**
+	 * Checks whether all items slots are taken
+	 * @returns True if inventory full
+	 */
 	// eslint-disable-next-line class-methods-use-this
 	isInventoryFull(): boolean {
 		let full = true;
