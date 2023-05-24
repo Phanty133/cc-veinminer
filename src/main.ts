@@ -1,7 +1,7 @@
 import { MappedBlock } from "./BlockMap";
 import DigController from "./DigController";
 import FuelController from "./FuelController";
-import InventoryController, { BlacklistEntry } from "./InventoryController";
+import InventoryController, { BlacklistEntry, SupplyEntry } from "./InventoryController";
 import MovementController from "./MovementController";
 import SpatialMap from "./SpatialMap";
 import VeinMiner from "./VeinMiner";
@@ -27,13 +27,19 @@ const FUEL_WHITELIST = [
 	"minecraft:coal_block",
 	"minecraft:charcoal",
 	"minecraft:coal_block",
+	"minecraft:lava_bucket",
 ];
 
 const INV_CLEAR_BLACKLIST: BlacklistEntry[] = [
-	{ name: "minecraft:torch", maxCount: 64 },
 	{ name: "minecraft:coal", maxCount: 64 },
 	{ name: "minecraft:charcoal", maxCount: 64 },
 	{ name: "minecraft:coal_block", maxCount: 64 },
+];
+
+const INV_RESUPPLY: SupplyEntry[] = [
+	{ name: "minecraft:torch", count: 64 },
+	{ name: "minecraft:coal", count: 64 },
+	{ name: "minecraft:lava_bucket", count: 1 },
 ];
 
 const BUILDING_BLOCKS = [
@@ -52,7 +58,7 @@ const fuelController = new FuelController(FUEL_WHITELIST, FUEL_TARGET);
 const moveController = new MovementController(fuelController);
 const spatialMap = new SpatialMap(moveController);
 const digController = new DigController(moveController, spatialMap);
-const invController = new InventoryController(INV_CLEAR_BLACKLIST);
+const invController = new InventoryController(INV_CLEAR_BLACKLIST, INV_RESUPPLY);
 
 const pathBuilder = new PathBuilder(
 	BUILDING_BLOCKS,
@@ -69,13 +75,15 @@ const miner = new VeinMiner(
 	SHAFT_DEPTH,
 );
 
+invController.refreshInventory();
+
 // eslint-disable-next-line no-constant-condition
-while (true) {
-	invController.sortInventory();
+// while (true) {
+// 	invController.sortInventory();
 
-	if (invController.isInventoryFull()) {
-		invController.clearInventory();
-	}
+// 	if (invController.isInventoryFull()) {
+// 		invController.clearInventory();
+// 	}
 
-	miner.mineIteration();
-}
+// 	miner.mineIteration();
+// }

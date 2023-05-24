@@ -762,9 +762,9 @@ declare namespace turtle {
   function dropUp(toolSide?: string): boolean;
   function dropDown(toolSide?: string): boolean;
 
-  function suck(toolSide?: string): boolean;
-  function suckUp(toolSide?: string): boolean;
-  function suckDown(toolSide?: string): boolean;
+  function suck(count: number): boolean;
+  function suckUp(count: number): boolean;
+  function suckDown(count: number): boolean;
 
   function refuel(): boolean;
   function refuel(quantity: number): boolean;
