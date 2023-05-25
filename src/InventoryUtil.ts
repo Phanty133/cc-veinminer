@@ -104,7 +104,7 @@ export function pullItemFromInventorySlot(
 			if (invEmptySlot === invSize) chestFull = true;
 		}
 
-		const existingItemCount = Number(chest.getItemDetail(1).count);
+		const existingItemCount = Number(chest.getItemDetail(1)?.count) ?? 0;
 
 		// If the chest is full, suck the first item into the turtle
 		if (chestFull) {
@@ -129,7 +129,7 @@ export function pullItemFromInventorySlot(
 		chest.pushItems(periphDir, slot, maxCount, 1);
 	}
 
-	const pulledItems = Math.min(Number(chest.getItemDetail(1).count), maxCount);
+	const pulledItems = Math.min(Number(chest.getItemDetail(1)?.count), maxCount);
 
 	TurtleUtils.suckDirection(periphDir, maxCount);
 
