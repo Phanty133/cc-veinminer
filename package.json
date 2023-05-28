@@ -4,7 +4,7 @@
   "description": "Advanced ComputerCraft mining turtle shaft/veinminer. Based on the CC-TSTL template by https://github.com/MCJack123.",
   "main": "src/main.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "build": "run-s lint build:tstl",
     "build:tstl": "tstl",
     "lint": "eslint",
@@ -17,6 +17,7 @@
     "@jackmacwindows/craftos-types": "^1.1.1",
     "@jackmacwindows/lua-types": "^2.13.1",
     "@jackmacwindows/typescript-to-lua": "^1.12.0",
+    "@types/node": "^20.2.4",
     "@typescript-eslint/eslint-plugin": "^5.59.7",
     "eslint": "^8.41.0",
     "eslint-config-airbnb-base": "^15.0.0",
@@ -25,19 +26,21 @@
     "eslint-plugin-n": "^15.7.0",
     "eslint-plugin-promise": "^6.1.1",
     "jest": "^29.5.0",
+    "nodemon": "^2.0.22",
+    "npm-run-all": "^4.1.5",
     "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.1",
     "typedoc": "^0.24.7",
     "typescript": "^4.9.5"
   },
   "author": "phanty",
   "license": "MIT",
-  "dependencies": {
-    "nodemon": "^2.0.22",
-    "npm-run-all": "^4.1.5"
-  },
   "pnpm": {
     "patchedDependencies": {
       "@jackmacwindows/craftos-types@1.1.1": "patches/@jackmacwindows__craftos-types@1.1.1.patch"
     }
+  },
+  "dependencies": {
+    "@jest/globals": "^29.5.0"
   }
 }

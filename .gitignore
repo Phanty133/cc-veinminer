@@ -4,3 +4,4 @@ node_modules
 event/
 docs
 dist
+coverage

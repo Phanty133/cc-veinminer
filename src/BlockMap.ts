@@ -6,16 +6,18 @@ export interface MappedBlock {
 	breakable: boolean,
 }
 
+export type MapData = Record<number, Record<number, Record<number, MappedBlock>>>;
+
 /** Maps a Vector coordinate to a known block */
 export default class BlockMap {
 	/** {x: {y: {z: ID}}} */
-	private blocks: Record<number, Record<number, Record<number, MappedBlock>>>;
+	private blocks: MapData;
 
 	/**
 	 * Initialize the map
 	 */
-	constructor() {
-		this.blocks = {};
+	constructor(existingMap?: MapData) {
+		this.blocks = existingMap ?? {};
 	}
 
 	/**

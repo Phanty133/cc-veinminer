@@ -6,7 +6,13 @@
         "moduleResolution": "node",
         "strict": false,
         "rootDir": "src",
-        "types": ["@jackmacwindows/lua-types/cc", "@jackmacwindows/craftos-types", "@jackmacwindows/cc-types"]
+        "esModuleInterop": true,
+        "types": [
+            "@jackmacwindows/lua-types/cc",
+            "@jackmacwindows/craftos-types",
+            "@jackmacwindows/cc-types",
+            "@types/node"
+        ]
     },
     "tstl": {
         "luaTarget": "CC",
@@ -16,5 +22,8 @@
     },
     "include": [
         "./src/*.ts"
+    ],
+    "exclude": [
+        "./tests/*"
     ]
 }
