@@ -70,12 +70,12 @@ export default class VeinMiner {
 	 */
 	mineForward(num = 1) {
 		for (let i = 0; i < num; i++) {
-			this.dig.digMove("FRONT");
+			this.dig.digMove("FRONT", true);
 			this.attemptMineOreVein();
 			this.pathBuilder.ensurePathBlock();
 			this.pathBuilder.ensureNoLiquidBlock();
 
-			this.dig.digMove("TOP");
+			this.dig.digMove("TOP", true);
 			this.attemptMineOreVein();
 			this.pathBuilder.ensureNoLiquidBlock();
 			this.movement.forceDown();
@@ -107,7 +107,7 @@ export default class VeinMiner {
 			}
 
 			if (oreDirection !== null) {
-				this.dig.digMove(oreDirection);
+				this.dig.digMove(oreDirection, true);
 			} else {
 				// Revert unless already at the start position
 				if (this.movement.history.length === 0) break;

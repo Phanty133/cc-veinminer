@@ -73,6 +73,7 @@ export default class MovementController {
 	 */
 	private forwardFueled() {
 		this.fuel.ensureFuel();
+
 		return turtle.forward();
 	}
 
