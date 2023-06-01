@@ -1,5 +1,6 @@
 /**
  * Implementation of CC's Vector class for testing
+ * Technically a fake, not a mock, but ¯\_(ツ)_/¯
  */
 export default class Vector {
 	x: number;

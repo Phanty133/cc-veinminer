@@ -8,6 +8,10 @@ const turtleMock = {
 	suck: () => true,
 	suckUp: () => true,
 	suckDown: () => true,
+	getFuelLevel: () => 0,
+	select: () => true,
+	refuel: () => true,
+	getItemDetail: () => null,
 };
 
 Object.defineProperty(global, "turtle", { value: turtleMock });

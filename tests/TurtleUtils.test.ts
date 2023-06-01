@@ -1,10 +1,14 @@
 import {
-	expect, describe, test, jest,
+	expect, describe, test, jest, afterEach,
 } from "@jest/globals";
 import { TurtleUtils } from "../src/TurtleUtils";
 import { Block } from "../src/minecraft";
 
 describe("TurtleUtils", () => {
+	afterEach(() => {
+		jest.restoreAllMocks();
+	});
+
 	describe("inspect", () => {
 		test("No block", () => {
 			jest.spyOn(global.turtle, "inspect").mockReturnValueOnce([false, null] as any);

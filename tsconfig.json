@@ -21,9 +21,7 @@
         "luaBundleEntry": "src/main.ts"
     },
     "include": [
-        "./src/*.ts"
-    ],
-    "exclude": [
-        "./tests/*"
+        "./src/*.ts",
+        "tests/*.ts" // A pretty stupid solution for VSCode not resolving ambient types
     ]
 }
