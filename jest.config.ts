@@ -135,6 +135,7 @@ export default {
 	setupFilesAfterEnv: [
 		"<rootDir>/tests/__mocks__/_G.ts",
 		"<rootDir>/tests/__mocks__/os.ts",
+		"<rootDir>/tests/__mocks__/turtle.ts",
 	],
 
 	// A list of paths to modules that run some code to configure or set up the testing framework before each test
