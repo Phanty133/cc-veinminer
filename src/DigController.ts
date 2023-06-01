@@ -148,23 +148,34 @@ export default class DigController {
 	 * Attempts to dig and move in a direction.
 	 * If the block is unbreakable, it will be marked as such in the spatial map and the move will fail.
 	 * @param dir Direction to dig and move in
+	 * @param forced If the move failed, dig until moved
 	 * @param ignoreMap Whether to update the block data in the spatial map
 	 * @returns True if successful
 	 */
-	digMove(dir: BlockDirection, ignoreMap = false): boolean {
+	digMove(dir: BlockDirection, forced = false, ignoreMap = false): boolean {
 		const success = this.dig(dir, ignoreMap);
 
 		if (!success) return false;
 
-		if (dir === "TOP") {
-			this.move.up();
-		} else if (dir === "BOTTOM") {
-			this.move.down();
-		} else {
-			// .dig() by default leaves the direction facing the block that was mined
-			this.move.forward();
-		}
+		let moveSuccess = true;
 
-		return true;
+		do {
+			if (dir === "TOP") {
+				if (!moveSuccess) turtle.digUp();
+
+				moveSuccess = this.move.up();
+			} else if (dir === "BOTTOM") {
+				if (!moveSuccess) turtle.digUp();
+
+				moveSuccess = this.move.down();
+			} else {
+				if (!moveSuccess) turtle.dig();
+
+				// .dig() by default leaves the direction facing the block that was mined
+				moveSuccess = this.move.forward();
+			}
+		} while (forced && !moveSuccess);
+
+		return moveSuccess;
 	}
 }
