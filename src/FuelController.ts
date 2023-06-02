@@ -46,7 +46,7 @@ export default class FuelController {
 		turtle.select(fuel.slot);
 
 		if (turtle.refuel(1)) {
-			print(`INFO: Refueled with ${fuel.item}`);
+			print(`INFO: Refueled with ${fuel.item.name}`);
 		} else {
 			print("ERROR: Failed to refuel!");
 		}

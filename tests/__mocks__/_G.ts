@@ -3,7 +3,7 @@
 
 Object.defineProperty(global, "sleep", { value: () => {} });
 Object.defineProperty(global, "write", { value: () => 1 });
-Object.defineProperty(global, "print", { value: () => 1 });
+Object.defineProperty(global, "print", { value: console.log });
 Object.defineProperty(global, "printError", { value: () => {} });
 Object.defineProperty(global, "read", { value: () => "Hello world" });
 Object.defineProperty(global, "_HOST", { value: "CC_TEST" });

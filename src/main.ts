@@ -51,7 +51,7 @@ const FLUID_BLOCKS = [
 	"minecraft:lava",
 ];
 
-const FUEL_TARGET = 500;
+const FUEL_TARGET = 5000;
 const SHAFT_DEPTH = 7;
 
 const invController = new InventoryController(INV_CLEAR_BLACKLIST, INV_RESUPPLY);

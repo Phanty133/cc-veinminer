@@ -91,11 +91,12 @@ export function pullItemFromInventorySlot(
 	invPeripheral?: InventoryPeripheral,
 ): number {
 	const chest = (invPeripheral ?? peripheral.wrap(periphDir)) as InventoryPeripheral;
+	if (!chest) return 0;
+
 	const invSize = chest.size();
 	let chestFull = false;
 	let invEmptySlot: number;
 
-	if (!chest) return 0;
 	if (slot !== 1) {
 		// Find first empty slot in the chest
 
@@ -104,7 +105,7 @@ export function pullItemFromInventorySlot(
 			if (invEmptySlot === invSize) chestFull = true;
 		}
 
-		const existingItemCount = Number(chest.getItemDetail(1)?.count) ?? 0;
+		const existingItemCount = chest.getItemDetail(1)?.count ?? 0;
 
 		// If the chest is full, suck the first item into the turtle
 		if (chestFull) {
@@ -129,7 +130,7 @@ export function pullItemFromInventorySlot(
 		chest.pushItems(periphDir, slot, maxCount, 1);
 	}
 
-	const pulledItems = Math.min(Number(chest.getItemDetail(1)?.count), maxCount);
+	const pulledItems = Math.min(chest.getItemDetail(1)?.count, maxCount);
 
 	TurtleUtils.suckDirection(periphDir, maxCount);
 
@@ -139,7 +140,7 @@ export function pullItemFromInventorySlot(
 		TurtleUtils.dropDirection(periphDir);
 	} else if (slot !== 1 && invEmptySlot !== 1) {
 		// Return the item that was moved to make room for the 1st slot
-		chest.pushItems(periphDir, invEmptySlot, Number(chest.getItemDetail(invEmptySlot).count), 1);
+		chest.pushItems(periphDir, invEmptySlot, chest.getItemDetail(invEmptySlot)!.count, 1);
 	}
 
 	return pulledItems;

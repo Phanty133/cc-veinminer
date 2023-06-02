@@ -29,7 +29,7 @@ describe("FuelController", () => {
 				slot: 3,
 				item: {
 					name: "minecraft:coal",
-					count: "1",
+					count: 1,
 					displayName: "Coal",
 					maxCount: 64,
 					tags: [],

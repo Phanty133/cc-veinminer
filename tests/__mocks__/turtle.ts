@@ -12,6 +12,7 @@ const turtleMock = {
 	select: () => true,
 	refuel: () => true,
 	getItemDetail: () => null,
+	getItemCount: () => 0,
 };
 
 Object.defineProperty(global, "turtle", { value: turtleMock });
