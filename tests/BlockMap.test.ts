@@ -7,8 +7,29 @@ import BlockMap, { MapData } from "../src/BlockMap";
 
 describe("BlockMap", () => {
 	describe("getBlockEntry", () => {
-		test("Invalid block", () => {
+		test("Invalid block X", () => {
 			const map = new BlockMap();
+			const entry = map.getBlockEntry(new Vector(1, 2, 3));
+
+			expect(entry).toBe(null);
+		});
+
+		test("Invalid block Y", () => {
+			const mapData: MapData = {};
+			mapData[1] = {};
+
+			const map = new BlockMap(mapData);
+			const entry = map.getBlockEntry(new Vector(1, 2, 3));
+
+			expect(entry).toBe(null);
+		});
+
+		test("Invalid block Z", () => {
+			const mapData: MapData = {};
+			mapData[1] = {};
+			mapData[1][2] = {};
+
+			const map = new BlockMap(mapData);
 			const entry = map.getBlockEntry(new Vector(1, 2, 3));
 
 			expect(entry).toBe(null);
@@ -137,8 +158,29 @@ describe("BlockMap", () => {
 	});
 
 	describe("removeBlock", () => {
-		test("Invalid block", () => {
+		test("Invalid block X", () => {
 			const map = new BlockMap();
+			const pos = new Vector(0, 1, 2);
+
+			expect(map.removeBlock(pos)).toBeFalsy();
+		});
+
+		test("Invalid block Y", () => {
+			const mapData: MapData = {};
+			mapData[0] = {};
+
+			const map = new BlockMap(mapData);
+			const pos = new Vector(0, 1, 2);
+
+			expect(map.removeBlock(pos)).toBeFalsy();
+		});
+
+		test("Invalid block Z", () => {
+			const mapData: MapData = {};
+			mapData[0] = {};
+			mapData[0][1] = {};
+
+			const map = new BlockMap(mapData);
 			const pos = new Vector(0, 1, 2);
 
 			expect(map.removeBlock(pos)).toBeFalsy();

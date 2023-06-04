@@ -3,6 +3,7 @@ import {
 	findFirstItem, forSlot, getItem, pullItemFromInventorySlot,
 } from "./InventoryUtil";
 import { getTimeSeconds } from "./OsUtils";
+import { TurtleUtils } from "./TurtleUtils";
 import { BlockId } from "./minecraft";
 
 export interface BlacklistEntry {
@@ -58,7 +59,7 @@ export default class InventoryController {
 	 * Finds the ender chest in the inventory
 	 * @returns Slot with ender chest. `null` if no ender chest found.
 	 */
-	private findEnderChest() {
+	findEnderChest(): number | null {
 		return findFirstItem((item) => item.name === this.enderChestId)?.slot ?? null;
 	}
 
@@ -67,7 +68,7 @@ export default class InventoryController {
 	 * @param force If true, the turtle will attempt to dig out blocks if the placement fails
 	 * @returns True if chest placed
 	 */
-	private placeChest(force = true): boolean {
+	placeChest(force = true): boolean {
 		const chestSlot = this.findEnderChest();
 
 		if (chestSlot === null) return false;
@@ -92,6 +93,8 @@ export default class InventoryController {
 			if (item) {
 				forSlot((otherSlot, otherItem) => {
 					if (otherItem?.name === item.name && otherItem?.nbt === item?.nbt) {
+						if (turtle.getItemSpace() === 0) return;
+
 						turtle.select(otherSlot);
 						turtle.transferTo(slot);
 					}
@@ -170,7 +173,7 @@ export default class InventoryController {
 
 				if (blacklistEntry === undefined || itemOverflow !== undefined) {
 					turtle.select(slot);
-					turtle.drop(itemOverflow as any);
+					TurtleUtils.dropDirection("front", itemOverflow ?? item.count);
 				}
 			}
 		});
