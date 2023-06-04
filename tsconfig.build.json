@@ -11,12 +11,19 @@
             "@jackmacwindows/lua-types/cc",
             "@jackmacwindows/craftos-types",
             "@jackmacwindows/cc-types",
-            "@types/node"
         ]
+    },
+    "tstl": {
+        "luaTarget": "CC",
+        "luaLibImport": "inline",
+        "luaBundle": "dist/main.lua",
+        "luaBundleEntry": "src/main.ts"
     },
     "include": [
         "./src/*.ts",
-        "tests/*.ts", // A pretty stupid solution for VSCode not resolving ambient types
+    ],
+    "exclude": [
+        "tests/*.ts",
         "tests/lib/*.ts"
     ]
 }

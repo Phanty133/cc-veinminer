@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   '@jackmacwindows/craftos-types@1.1.1':
-    hash: k7qisgcqhgzzncqzma6h6a2b5y
+    hash: m7vptngprxrytyognglswiphv4
     path: patches/@jackmacwindows__craftos-types@1.1.1.patch
 
 dependencies:
@@ -20,7 +20,7 @@ devDependencies:
     version: 1.0.0
   '@jackmacwindows/craftos-types':
     specifier: ^1.1.1
-    version: 1.1.1(patch_hash=k7qisgcqhgzzncqzma6h6a2b5y)
+    version: 1.1.1(patch_hash=m7vptngprxrytyognglswiphv4)
   '@jackmacwindows/lua-types':
     specifier: ^2.13.1
     version: 2.13.1
@@ -461,7 +461,7 @@ packages:
     resolution: {integrity: sha512-FMJCi3yZxDwBodPWF36M/CLYSSbtNcb92CU3gIcjYv8Ul8ARWbgnswTNUSRGWYGOEFxjEHnSQQ0cjcugUMpY2A==}
     dev: true
 
-  /@jackmacwindows/craftos-types@1.1.1(patch_hash=k7qisgcqhgzzncqzma6h6a2b5y):
+  /@jackmacwindows/craftos-types@1.1.1(patch_hash=m7vptngprxrytyognglswiphv4):
     resolution: {integrity: sha512-h9AYt6yarwR5sLA1CcM+dK/xoEYUUTz9CzbG8UE9wfWElYEjHtvVmPh4sW7FRhVLWcRNkDrnRfwu4clbhHRddA==}
     dev: true
     patched: true

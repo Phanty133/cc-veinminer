@@ -1,8 +1,8 @@
 diff --git a/craftos.d.ts b/craftos.d.ts
-index bf9908fa5a1ace9c10a556dd06e7b294539a959a..e2618cf4f8f5e33a94f3a19b6bde726dc519b68c 100755
+index bf9908fa5a1ace9c10a556dd06e7b294539a959a..8f20bc7387e4a3e350144a99227908d641d51ad9 100755
 --- a/craftos.d.ts
 +++ b/craftos.d.ts
-@@ -493,7 +493,7 @@ declare class FluidStoragePeripheral implements IPeripheral {
+@@ -493,10 +493,10 @@ declare class FluidStoragePeripheral implements IPeripheral {
  
  declare type ItemDetail = {
      name: string;
@@ -10,7 +10,11 @@ index bf9908fa5a1ace9c10a556dd06e7b294539a959a..e2618cf4f8f5e33a94f3a19b6bde726d
 +    count: number;
      nbt?: string;
      displayName: string;
-     maxCount: number;
+-    maxCount: number;
++    maxCount?: number;
+     damage?: number;
+     maxDamage?: number;
+     durability?: number;
 @@ -738,9 +738,9 @@ declare namespace turtle {
    function attackUp(toolSide?: string): boolean;
    function attackDown(toolSide?: string): boolean;
