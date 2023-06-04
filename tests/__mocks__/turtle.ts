@@ -13,6 +13,7 @@ const turtleMock = {
 	refuel: () => true,
 	getItemDetail: () => null,
 	getItemCount: () => 0,
+	transferTo: () => true,
 };
 
 Object.defineProperty(global, "turtle", { value: turtleMock });

@@ -117,7 +117,7 @@ export function pullItemFromInventorySlot(
 				turtle.transferTo(turtleEmptySlot, turtle.getItemCount(1));
 			}
 
-			turtle.suck(existingItemCount);
+			TurtleUtils.suckDirection(periphDir, existingItemCount);
 		}
 
 		// If the 1st slot is not empty, move it to the first empty slot
@@ -139,8 +139,10 @@ export function pullItemFromInventorySlot(
 		turtle.select(1);
 		TurtleUtils.dropDirection(periphDir);
 	} else if (slot !== 1 && invEmptySlot !== 1) {
+		const item = chest.getItemDetail(invEmptySlot);
+
 		// Return the item that was moved to make room for the 1st slot
-		chest.pushItems(periphDir, invEmptySlot, chest.getItemDetail(invEmptySlot)!.count, 1);
+		if (item?.count) chest.pushItems(periphDir, invEmptySlot, item.count, 1);
 	}
 
 	return pulledItems;

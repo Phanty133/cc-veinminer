@@ -1,4 +1,5 @@
 // Again, more of a fake than a mock, but it just felt more straightforward
+// Narrator: It was not more straightforward.
 export default class InventoryPeripheral {
 	private invSize: number;
 
@@ -77,5 +78,46 @@ export default class InventoryPeripheral {
 	// If you need to push to a different InventoryPeripheral, overwrite the implementation.
 	pullItems(fromName: string, fromSlot: number, limit?: number, toSlot?: number): number {
 		return this.pushItems(fromName, fromSlot, limit, toSlot);
+	}
+
+	removeItem(slot: number): ItemDetail | null {
+		const item = this.invItems[slot];
+
+		if (!item) return null;
+
+		delete this.invItems[slot];
+		return item;
+	}
+
+	suckItem(): ItemDetail | null {
+		return this.removeItem(1);
+	}
+
+	dropItem(item: ItemDetail, count: number): number {
+		let emptySlot: number | null = null;
+		let remainingCount = count;
+
+		for (let slot = 1; slot < this.invSize; slot++) {
+			const invItem = this.invItems[slot];
+
+			if (!invItem) {
+				if (emptySlot === null) emptySlot = slot;
+
+				continue;
+			}
+
+			if (invItem.name === item.name && invItem.count < invItem.maxCount) {
+				const insertCount = Math.min(remainingCount, invItem.maxCount - invItem.count);
+				this.invItems[slot].count += insertCount;
+				remainingCount -= insertCount;
+			}
+		}
+
+		// Check if all possible items already inserted
+		if (remainingCount > 0 && emptySlot === -1) return count - remainingCount;
+		this.invItems[emptySlot] = item;
+		this.invItems[emptySlot].count = remainingCount;
+
+		return count;
 	}
 }

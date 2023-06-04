@@ -1,5 +1,6 @@
 import { jest } from "@jest/globals";
 import InventoryPeripheral from "../__mocks__/InventoryPeripheral";
+import { TurtleUtils } from "../../src/TurtleUtils";
 
 export function mockTurtleInventory(): [jest.SpiedFunction<typeof global.turtle.getItemDetail>, Record<number, ItemDetail>] {
 	const inventory: Record<number, ItemDetail> = {
@@ -47,8 +48,8 @@ export function mockTurtleInventory(): [jest.SpiedFunction<typeof global.turtle.
 }
 
 export function mockInventoryPeripheral(
-	invEdit?: (inv: Record<number, ItemDetail>) => Record<number, ItemDetail>,
-): [jest.SpiedFunction<typeof global.peripheral.wrap>, InventoryPeripheral] {
+	invEdit?: (inv: Record<number, ItemDetail>, size: number) => { inventory: Record<number, ItemDetail>, size: number },
+): { spy: jest.SpiedFunction<typeof global.peripheral.wrap>, peripheral: InventoryPeripheral} {
 	let inventory: Record<number, ItemDetail> = {
 		1: {
 			name: "minecraft:coal",
@@ -86,12 +87,33 @@ export function mockInventoryPeripheral(
 			tags: [],
 		},
 	};
+	let size = 30;
 
-	if (invEdit) inventory = invEdit(inventory);
-	const invPeripheral = new InventoryPeripheral(30, inventory);
+	if (invEdit) {
+		const edited = invEdit(inventory, size);
+		inventory = edited.inventory;
+		size = edited.size;
+	}
 
+	const peripheral = new InventoryPeripheral(size, inventory);
 	const func = jest.spyOn(global.peripheral, "wrap")
-		.mockImplementationOnce(() => invPeripheral);
+		.mockImplementation(() => peripheral);
 
-	return [func, invPeripheral];
+	return { spy: func, peripheral };
+}
+
+export function mockTurtleSuckDirection(invPeripheral: InventoryPeripheral) {
+	return jest
+		.spyOn(TurtleUtils, "suckDirection")
+		.mockImplementation(() => {
+			invPeripheral.suckItem();
+		});
+}
+
+export function mockTurtleDropDirection(invPeripheral: InventoryPeripheral, item: ItemDetail) {
+	return jest
+		.spyOn(TurtleUtils, "dropDirection")
+		.mockImplementation((dir: string, count = 64) => {
+			invPeripheral.dropItem(item, count);
+		});
 }
