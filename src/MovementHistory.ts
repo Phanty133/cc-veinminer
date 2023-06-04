@@ -2,7 +2,11 @@ export type MoveAction = "FORWARD" | "TURN_LEFT" | "TURN_RIGHT" | "BACK" | "UP" 
 
 /** Stack data structure that tracks movement history */
 export default class MovementHistory {
-	private history: MoveAction[];
+	private _history: MoveAction[];
+
+	public get history() {
+		return [...this._history];
+	}
 
 	private readonly actionMap: Record<MoveAction, MoveAction> = {
 		FORWARD: "BACK",
@@ -15,21 +19,21 @@ export default class MovementHistory {
 
 	/** Length of history */
 	public get length() {
-		return this.history.length;
+		return this._history.length;
 	}
 
 	/**
 	 * Initializes movement history
 	 */
 	constructor() {
-		this.history = [];
+		this._history = [];
 	}
 
 	/**
 	 * Clears movement history
 	 */
 	clear() {
-		this.history = [];
+		this._history = [];
 	}
 
 	/**
@@ -37,7 +41,7 @@ export default class MovementHistory {
 	 * @returns Value of the element that was deleted
 	 */
 	pop() {
-		return this.history.pop();
+		return this._history.pop();
 	}
 
 	/**
@@ -45,7 +49,7 @@ export default class MovementHistory {
 	 * @param action Action to add
 	 */
 	add(action: MoveAction) {
-		this.history.push(action);
+		this._history.push(action);
 	}
 
 	/**
